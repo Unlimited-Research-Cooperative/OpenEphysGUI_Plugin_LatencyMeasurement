@@ -7,17 +7,20 @@ LatencyMeasurement::LatencyMeasurement()
       context(1),  // 1 is the number of I/O threads in the context
       socket(context, ZMQ_PUB)  // ZMQ_PUB means this socket will be publishing messages
 {
+    // Consider adding error handling for the bind operation
     socket.bind("tcp://*:5555");  // Replace with your specific address and port
 }
 
 LatencyMeasurement::~LatencyMeasurement()
 {
+    // Ensure that resources are released properly
     socket.close();
     context.close();
 }
 
 AudioProcessorEditor* LatencyMeasurement::createEditor()
 {
+    // Ensure that the editor is created correctly
     editor = std::make_unique<LatencyMeasurementEditor>(this);
     return editor.get();
 }
@@ -38,8 +41,8 @@ void LatencyMeasurement::process(AudioBuffer<float>& buffer)
     // Send the timestamp via ZMQ
     zmq::message_t message(timestampStr.size());
     memcpy(message.data(), timestampStr.data(), timestampStr.size());
-    socket.send(message);
 
-    // Call the parent class's process method
-    GenericProcessor::process(buffer);
+    // Consider adding error handling for the send operation
+    socket.send(message);
 }
+

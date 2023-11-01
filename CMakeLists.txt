@@ -1,3 +1,5 @@
+list(APPEND CMAKE_MODULE_PATH "/home/vincent/AAA_projects/UnlimitedResearchCooperative/Myelin-Colab/OpenEphys/OpehEphysPluginGUI/OEPlugins/Latency-Measurement")
+
 cmake_minimum_required(VERSION 3.5.0)
 
 if (NOT DEFINED GUI_BASE_DIR)
@@ -32,7 +34,13 @@ set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS
 )
 
 set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/Source)
-file(GLOB_RECURSE SRC_FILES LIST_DIRECTORIES false "${SOURCE_PATH}/*.cpp" "${SOURCE_PATH}/*.h")
+file(GLOB_RECURSE SRC_FILES 
+     LIST_DIRECTORIES false 
+     "${SOURCE_PATH}/*.cpp" 
+     "${SOURCE_PATH}/*.h"
+)
+list(FILTER SRC_FILES EXCLUDE REGEX ".ipynb_checkpoints")
+
 set(GUI_COMMONLIB_DIR ${GUI_BASE_DIR}/installed_libs)
 
 set(CONFIGURATION_FOLDER $<$<CONFIG:Debug>:Debug>$<$<NOT:$<CONFIG:Debug>>:Release>)
@@ -42,7 +50,16 @@ list(APPEND CMAKE_PREFIX_PATH ${GUI_COMMONLIB_DIR} ${GUI_COMMONLIB_DIR}/${CONFIG
 add_library(${PLUGIN_NAME} SHARED ${SRC_FILES})
 
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_auto_type cxx_generalized_initializers cxx_std_17)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${GUI_BASE_DIR}/JuceLibraryCode ${GUI_BASE_DIR}/JuceLibraryCode/modules ${GUI_BASE_DIR}/Plugins/Headers ${GUI_COMMONLIB_DIR}/include)
+target_include_directories(${PLUGIN_NAME} PUBLIC
+    /home/vincent/AAA_projects/UnlimitedResearchCooperative/Myelin-Colab/OpenEphys/OpehEphysPluginGUI/plugin-GUI/JuceLibraryCode
+    ${GUI_BASE_DIR}/JuceLibraryCode
+    ${GUI_BASE_DIR}/JuceLibraryCode/modules
+    ${GUI_BASE_DIR}/Plugins/Headers
+    ${GUI_COMMONLIB_DIR}/include
+    /home/vincent/AAA_projects/UnlimitedResearchCooperative/Myelin Colab/OpenEphys/OpehEphysPluginGUIStable/Source/Processors/Headers/
+    /home/vincent/AAA_projects/UnlimitedResearchCooperative/Myelin Colab/OpenEphys/OpehEphysPluginGUIStable/plugin-GUI/Source
+    /home/vincent/AAA_projects/UnlimitedResearchCooperative/Myelin Colab/OpenEphys/OpehEphysPluginGUIStable/plugin-GUI/Plugins/Headers
+)
 
 # Find ZeroMQ
 find_package(ZMQ REQUIRED)
@@ -87,4 +104,4 @@ endforeach()
 # find_path(LIBNAME_INCLUDE_DIRS includefile.h)
 #
 # target_link_libraries(${PLUGIN_NAME} ${LIBNAME_LIBRARIES})
-# target_include_directories(${PLUGIN_NAME} PRIVATE ${LIBNAME_INCLUDE_DIRS})
+
